@@ -12,5 +12,5 @@
 ## Release new version
 
 1. Update `Cargo.toml` and `package.json` with the new version number.
-2. Git commit with "Release vX.Y.Z" and push.
+2. Git commit with "Release vX.Y.Z" and push, don't create tag, the CI will do it.
 3. GitHub Actions will automatically publish the new version to crates.io.
