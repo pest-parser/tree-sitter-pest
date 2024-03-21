@@ -1,0 +1,171 @@
+================================================================================
+Grammar Rule declarations
+================================================================================
+
+grammar_rules = _{ SOI ~ grammar_doc* ~ grammar_rule* ~ EOI }
+
+--------------------------------------------------------------------------------
+
+    (pest
+      (grammar_rule
+        (identifier)
+        (modifier)
+        (expression
+          (term
+            (builtin))
+          (infix_operator)
+          (term
+            (identifier)
+            (postfix_operator))
+          (infix_operator)
+          (term
+            (identifier)
+            (postfix_operator))
+          (infix_operator)
+          (term
+            (builtin)))))
+
+================================================================================
+Comment
+================================================================================
+
+// This is a comment
+/// This is a documentation comment
+//! This is a documentation comment
+
+/*
+    This is a block comment
+*/
+
+--------------------------------------------------------------------------------
+
+(pest
+    (line_comment)
+    (line_comment)
+    (line_comment)
+    (block_comment))
+
+================================================================================
+PUSH | PEEK | POP
+================================================================================
+
+string = @{ PUSH("\"") ~ inner ~ POP }
+inner  = @{ (!(PEEK | "\\") ~ ANY)* ~ (escape ~ inner)? }
+
+--------------------------------------------------------------------------------
+
+    (pest
+      (grammar_rule
+        (identifier)
+        (modifier)
+        (expression
+          (term
+            (expression
+              (term
+                (string))))
+          (infix_operator)
+          (term
+            (identifier))
+          (infix_operator)
+          (term)))
+      (grammar_rule
+        (identifier)
+        (modifier)
+        (expression
+          (term
+            (expression
+              (term
+                (prefix_operator)
+                (ERROR)
+                (expression
+                  (term
+                    (string))))
+              (infix_operator)
+              (term
+                (builtin)))
+            (postfix_operator))
+          (infix_operator)
+          (term
+            (expression
+              (term
+                (identifier))
+              (infix_operator)
+              (term
+                (identifier)))
+            (postfix_operator)))))
+
+================================================================================
+Constants
+================================================================================
+
+number     = @{ "-"? ~ int ~ ("." ~ ASCII_DIGIT+ ~ exp? | exp)? }
+int        = @{ "0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT* }
+exp        = @{ ("E" | "e") ~ ("+" | "-")? ~ ASCII_DIGIT+ }
+
+--------------------------------------------------------------------------------
+
+  (pest
+      (grammar_rule
+        (identifier)
+        (modifier)
+        (expression
+          (term
+            (string)
+            (postfix_operator))
+          (infix_operator)
+          (term
+            (identifier))
+          (infix_operator)
+          (term
+            (expression
+              (term
+                (string))
+              (infix_operator)
+              (term
+                (const)
+                (postfix_operator))
+              (infix_operator)
+              (term
+                (identifier)
+                (postfix_operator))
+              (infix_operator)
+              (term
+                (identifier)))
+            (postfix_operator))))
+      (grammar_rule
+        (identifier)
+        (modifier)
+        (expression
+          (term
+            (string))
+          (infix_operator)
+          (term
+            (const))
+          (infix_operator)
+          (term
+            (const)
+            (postfix_operator))))
+      (grammar_rule
+        (identifier)
+        (modifier)
+        (expression
+          (term
+            (expression
+              (term
+                (string))
+              (infix_operator)
+              (term
+                (string))))
+          (infix_operator)
+          (term
+            (expression
+              (term
+                (string))
+              (infix_operator)
+              (term
+                (string)))
+            (postfix_operator))
+          (infix_operator)
+          (term
+            (const)
+            (postfix_operator)))))

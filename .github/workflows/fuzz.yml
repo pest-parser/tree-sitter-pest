@@ -1,0 +1,17 @@
+name: Fuzz Parser
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Parser fuzzing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: vigoux/tree-sitter-fuzz-action@v1
+        with:
+          language: pest
+          time: 60

@@ -1,0 +1,39 @@
+{
+  "name": "tree-sitter-pest",
+  "version": "0.0.1",
+  "description": "Pest grammar for tree-sitter",
+  "main": "bindings/node",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pest-parser/tree-sitter-pest.git"
+  },
+  "license": "MIT",
+  "keywords": ["parser", "pest"],
+  "author": "Jason Lee <huacnlee@gmail.com>",
+  "type": "commonjs",
+  "devDependencies": {
+    "node-gyp": ">=7 <11",
+    "tree-sitter-cli": "^0.20.8"
+  },
+  "dependencies": {
+    "nan": "^2.17.0"
+  },
+  "scripts": {
+    "build": "tree-sitter generate && node-gyp build",
+    "build-wasm": "tree-sitter build-wasm",
+    "lint": "eslint grammar.js",
+    "parse": "tree-sitter parse",
+    "test": "bun run build && tree-sitter test",
+    "test-windows": "tree-sitter test",
+    "dev": "bun run build && tree-sitter highlight --html examples/*.pest > target/out.html && open target/out.html"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.pest",
+      "file-types": ["pest"],
+      "highlights": ["queries/highlights.scm"],
+      "outline": ["queries/outline.scm"],
+      "brackets": ["queries/brackets.scm"]
+    }
+  ]
+}
