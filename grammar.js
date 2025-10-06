@@ -115,7 +115,8 @@ module.exports = grammar({
 
     _pop: (_) => seq("POP"),
 
-    builtin: (_) => choice("ANY", "SOI", "EOI", "NEWLINE"),
+    builtin: (_) =>
+      choice("ANY", "DROP", "EOI", "NEWLINE", "PEEK_ALL", "POP_ALL", "SOI"),
 
     const: ($) => CONST,
 

@@ -244,6 +244,10 @@
     "named": false
   },
   {
+    "type": "DROP",
+    "named": false
+  },
+  {
     "type": "EOI",
     "named": false
   },
@@ -256,7 +260,15 @@
     "named": false
   },
   {
+    "type": "PEEK_ALL",
+    "named": false
+  },
+  {
     "type": "POP",
+    "named": false
+  },
+  {
+    "type": "POP_ALL",
     "named": false
   },
   {

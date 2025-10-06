@@ -12,11 +12,11 @@
   "author": "Jason Lee <huacnlee@gmail.com>",
   "type": "commonjs",
   "devDependencies": {
-    "node-gyp": ">=7 <11",
+    "node-gyp": "^10.3.1",
     "tree-sitter-cli": "^0.20.8"
   },
   "dependencies": {
-    "nan": "^2.17.0"
+    "nan": "^2.23.0"
   },
   "scripts": {
     "build": "tree-sitter generate && node-gyp build",

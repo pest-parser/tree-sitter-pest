@@ -459,7 +459,7 @@
         },
         {
           "type": "STRING",
-          "value": "SOI"
+          "value": "DROP"
         },
         {
           "type": "STRING",
@@ -468,6 +468,18 @@
         {
           "type": "STRING",
           "value": "NEWLINE"
+        },
+        {
+          "type": "STRING",
+          "value": "PEEK_ALL"
+        },
+        {
+          "type": "STRING",
+          "value": "POP_ALL"
+        },
+        {
+          "type": "STRING",
+          "value": "SOI"
         }
       ]
     },
