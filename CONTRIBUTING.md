@@ -1,9 +1,9 @@
 # Development
 
+1. Run `bun run tree-sitter init-config` to initialize the `tree-sitter` configuration.
 1. Update `grammar.js` and run `bun run build` to generate the parser.
-2. Run `bun run test` to run the tests.
-3. If you have update the grammar, you can write new tests in `test/` and run `bun run test` to see if they pass.
-
+1. Run `bun run test` to run the tests.
+1. If you have update the grammar, you can write new tests in `test/` and run `bun run test` to see if they pass.
 
 ## Preview highlighter
 

@@ -8,7 +8,10 @@
     "url": "https://github.com/pest-parser/tree-sitter-pest.git"
   },
   "license": "MIT",
-  "keywords": ["parser", "pest"],
+  "keywords": [
+    "parser",
+    "pest"
+  ],
   "author": "Jason Lee <huacnlee@gmail.com>",
   "type": "commonjs",
   "devDependencies": {
@@ -25,15 +28,23 @@
     "parse": "tree-sitter parse",
     "test": "bun run build && tree-sitter test",
     "test-windows": "tree-sitter test",
-    "dev": "bun run build && tree-sitter highlight --html examples/*.pest > target/out.html && open target/out.html"
+    "dev": "bun run build && tree-sitter highlight --html examples/*.pest > build/out.html && open build/out.html"
   },
   "tree-sitter": [
     {
       "scope": "source.pest",
-      "file-types": ["pest"],
-      "highlights": ["queries/highlights.scm"],
-      "outline": ["queries/outline.scm"],
-      "brackets": ["queries/brackets.scm"]
+      "file-types": [
+        "pest"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "outline": [
+        "queries/outline.scm"
+      ],
+      "brackets": [
+        "queries/brackets.scm"
+      ]
     }
   ]
 }
