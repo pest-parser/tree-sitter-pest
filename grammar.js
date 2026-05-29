@@ -3,9 +3,10 @@
 /* eslint-disable-next-line spaced-comment */
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
-const IDENTIFIER = /[a-z_][a-z0-9_]*/;
-const CONST = /[A-Z_][A-Z0-9_]+/;
+const CONST = /[A-Z][A-Z0-9_]*/;
+const IDENTIFIER = /[a-zA-Z_][a-zA-Z0-9_]*/;
 const NUMBER = /[0-9]+/;
+const INTEGER = /[+-]?[0-9]+/;
 
 module.exports = grammar({
   name: "pest",
@@ -21,7 +22,7 @@ module.exports = grammar({
 
     grammar_rule: ($) =>
       seq(
-        field("name", $.identifier),
+        field("name", choice($.identifier, $.const)),
         "=",
         optional($.modifier),
         "{",
@@ -29,9 +30,31 @@ module.exports = grammar({
         "}",
       ),
 
-    identifier: ($) => IDENTIFIER,
+    push: ($) => seq("PUSH", "(", $.expression, ")"),
 
-    modifier: (_) => choice("_", "@", "$"),
+    push_literal: ($) => seq("PUSH_LITERAL", "(", $.string, ")"),
+
+    peek_slice: (_) =>
+      seq("PEEK", "[", optional(INTEGER), "..", optional(INTEGER), "]"),
+
+    builtin: (_) =>
+      choice(
+        "ANY",
+        "DROP",
+        "EOI",
+        "NEWLINE",
+        "PEEK",
+        "PEEK_ALL",
+        "POP",
+        "POP_ALL",
+        "SOI",
+      ),
+
+    const: (_) => CONST,
+
+    identifier: (_) => IDENTIFIER,
+
+    modifier: (_) => choice("_", "@", "$", "!"),
 
     expression: ($) =>
       seq(optional("|"), $.term, repeat(seq($.infix_operator, $.term))),
@@ -48,13 +71,13 @@ module.exports = grammar({
 
     _terminal: ($) =>
       choice(
-        $._push,
-        $._peek_slice,
+        $.push,
+        $.push_literal,
+        $.peek_slice,
         $.identifier,
         $.string,
-        $._insensitive_string,
+        $.insensitive_string,
         $.range,
-        $._pop,
         $.const,
         $.builtin,
       ),
@@ -72,7 +95,7 @@ module.exports = grammar({
                 choice(
                   /[^xu]/,
                   /u[0-9a-fA-F]{4}/,
-                  /u{[0-9a-fA-F]+}/,
+                  /u\{[0-9a-fA-F]+\}/,
                   /x[0-9a-fA-F]{2}/,
                 ),
               ),
@@ -100,27 +123,17 @@ module.exports = grammar({
           choice(
             /[^xu]/,
             /u[0-9a-fA-F]{4}/,
-            /u{[0-9a-fA-F]+}/,
+            /u\{[0-9a-fA-F]+\}/,
             /x[0-9a-fA-F]{2}/,
           ),
         ),
       ),
 
-    _insensitive_string: ($) => seq("^", $.string),
+    insensitive_string: ($) => seq("^", $.string),
 
-    _push: ($) => seq("PUSH", "(", $.expression, ")"),
+    node_tag: ($) => seq("#", $.tag_id, "="),
 
-    _peek_slice: (_) =>
-      seq("PEEK", "[", optional(NUMBER), "..", optional(NUMBER), "]"),
-
-    _pop: (_) => seq("POP"),
-
-    builtin: (_) =>
-      choice("ANY", "DROP", "EOI", "NEWLINE", "PEEK_ALL", "POP_ALL", "SOI"),
-
-    const: ($) => CONST,
-
-    node_tag: ($) => seq("#", $.identifier),
+    tag_id: (_) => IDENTIFIER,
 
     infix_operator: (_) => choice("~", "|"),
 
@@ -140,8 +153,14 @@ module.exports = grammar({
         "*",
         // repeat_once_operator
         "+",
-        // repeat_exact, repeat_min, repeat_max, repeat_min_max
-        seq("[", optional(","), NUMBER, optional(","), "]"),
+        // repeat_exact
+        seq("{", NUMBER, "}"),
+        // repeat_min
+        seq("{", NUMBER, ",", "}"),
+        // repeat_max
+        seq("{", ",", NUMBER, "}"),
+        // repeat_min_max
+        seq("{", NUMBER, ",", NUMBER, "}"),
       ),
 
     comment: ($) => choice($.block_comment, $.line_comment),

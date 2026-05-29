@@ -1,0 +1,18 @@
+{
+  "grammars": [
+    {
+      "name": "pest",
+      "camelCase": "pest",
+      "scope": "source.pest",
+      "path": ".",
+      "file-types": [
+        "pest"
+      ],
+      "highlights": "queries/highlights.scm"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT"
+  }
+}

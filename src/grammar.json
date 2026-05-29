@@ -1,4 +1,5 @@
 {
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
   "name": "pest",
   "rules": {
     "pest": {
@@ -15,8 +16,17 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "const"
+              }
+            ]
           }
         },
         {
@@ -49,9 +59,141 @@
         }
       ]
     },
+    "push": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "PUSH"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "push_literal": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "PUSH_LITERAL"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "string"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "peek_slice": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "PEEK"
+        },
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[+-]?[0-9]+"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ".."
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[+-]?[0-9]+"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "builtin": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ANY"
+        },
+        {
+          "type": "STRING",
+          "value": "DROP"
+        },
+        {
+          "type": "STRING",
+          "value": "EOI"
+        },
+        {
+          "type": "STRING",
+          "value": "NEWLINE"
+        },
+        {
+          "type": "STRING",
+          "value": "PEEK"
+        },
+        {
+          "type": "STRING",
+          "value": "PEEK_ALL"
+        },
+        {
+          "type": "STRING",
+          "value": "POP"
+        },
+        {
+          "type": "STRING",
+          "value": "POP_ALL"
+        },
+        {
+          "type": "STRING",
+          "value": "SOI"
+        }
+      ]
+    },
+    "const": {
+      "type": "PATTERN",
+      "value": "[A-Z][A-Z0-9_]*"
+    },
     "identifier": {
       "type": "PATTERN",
-      "value": "[a-z_][a-z0-9_]*"
+      "value": "[a-zA-Z_][a-zA-Z0-9_]*"
     },
     "modifier": {
       "type": "CHOICE",
@@ -67,6 +209,10 @@
         {
           "type": "STRING",
           "value": "$"
+        },
+        {
+          "type": "STRING",
+          "value": "!"
         }
       ]
     },
@@ -173,11 +319,15 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_push"
+          "name": "push"
         },
         {
           "type": "SYMBOL",
-          "name": "_peek_slice"
+          "name": "push_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "peek_slice"
         },
         {
           "type": "SYMBOL",
@@ -189,15 +339,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_insensitive_string"
+          "name": "insensitive_string"
         },
         {
           "type": "SYMBOL",
           "name": "range"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_pop"
         },
         {
           "type": "SYMBOL",
@@ -261,7 +407,7 @@
                           },
                           {
                             "type": "PATTERN",
-                            "value": "u{[0-9a-fA-F]+}"
+                            "value": "u\\{[0-9a-fA-F]+\\}"
                           },
                           {
                             "type": "PATTERN",
@@ -351,7 +497,7 @@
               },
               {
                 "type": "PATTERN",
-                "value": "u{[0-9a-fA-F]+}"
+                "value": "u\\{[0-9a-fA-F]+\\}"
               },
               {
                 "type": "PATTERN",
@@ -362,7 +508,7 @@
         ]
       }
     },
-    "_insensitive_string": {
+    "insensitive_string": {
       "type": "SEQ",
       "members": [
         {
@@ -375,118 +521,6 @@
         }
       ]
     },
-    "_push": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "PUSH"
-        },
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expression"
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ]
-    },
-    "_peek_slice": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "PEEK"
-        },
-        {
-          "type": "STRING",
-          "value": "["
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "[0-9]+"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": ".."
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "PATTERN",
-              "value": "[0-9]+"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": "]"
-        }
-      ]
-    },
-    "_pop": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "POP"
-        }
-      ]
-    },
-    "builtin": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "ANY"
-        },
-        {
-          "type": "STRING",
-          "value": "DROP"
-        },
-        {
-          "type": "STRING",
-          "value": "EOI"
-        },
-        {
-          "type": "STRING",
-          "value": "NEWLINE"
-        },
-        {
-          "type": "STRING",
-          "value": "PEEK_ALL"
-        },
-        {
-          "type": "STRING",
-          "value": "POP_ALL"
-        },
-        {
-          "type": "STRING",
-          "value": "SOI"
-        }
-      ]
-    },
-    "const": {
-      "type": "PATTERN",
-      "value": "[A-Z_][A-Z0-9_]+"
-    },
     "node_tag": {
       "type": "SEQ",
       "members": [
@@ -496,9 +530,17 @@
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "tag_id"
+        },
+        {
+          "type": "STRING",
+          "value": "="
         }
       ]
+    },
+    "tag_id": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z_][a-zA-Z0-9_]*"
     },
     "infix_operator": {
       "type": "CHOICE",
@@ -546,39 +588,82 @@
           "members": [
             {
               "type": "STRING",
-              "value": "["
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ","
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
+              "value": "{"
             },
             {
               "type": "PATTERN",
               "value": "[0-9]+"
             },
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ","
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[0-9]+"
             },
             {
               "type": "STRING",
-              "value": "]"
+              "value": ","
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "PATTERN",
+              "value": "[0-9]+"
+            },
+            {
+              "type": "STRING",
+              "value": "}"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "{"
+            },
+            {
+              "type": "PATTERN",
+              "value": "[0-9]+"
+            },
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "PATTERN",
+              "value": "[0-9]+"
+            },
+            {
+              "type": "STRING",
+              "value": "}"
             }
           ]
         }
@@ -662,6 +747,6 @@
   "precedences": [],
   "externals": [],
   "inline": [],
-  "supertypes": []
+  "supertypes": [],
+  "reserved": {}
 }
-
