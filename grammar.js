@@ -3,9 +3,10 @@
 /* eslint-disable-next-line spaced-comment */
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
-const CONST = /[A-Z_][A-Z0-9_]*/;
+const CONST = /[A-Z][A-Z0-9_]*/;
 const IDENTIFIER = /[a-zA-Z_][a-zA-Z0-9_]*/;
 const NUMBER = /[0-9]+/;
+const INTEGER = /[+-]?[0-9]+/;
 
 module.exports = grammar({
   name: "pest",
@@ -29,19 +30,29 @@ module.exports = grammar({
         "}",
       ),
 
-    _push: ($) => seq("PUSH", "(", $.expression, ")"),
+    push: ($) => seq("PUSH", "(", $.expression, ")"),
 
-    _peek_slice: (_) =>
-      seq("PEEK", "[", optional(NUMBER), "..", optional(NUMBER), "]"),
+    push_literal: ($) => seq("PUSH_LITERAL", "(", $.string, ")"),
 
-    _pop: (_) => seq("POP"),
+    peek_slice: (_) =>
+      seq("PEEK", "[", optional(INTEGER), "..", optional(INTEGER), "]"),
 
     builtin: (_) =>
-      choice("ANY", "DROP", "EOI", "NEWLINE", "PEEK_ALL", "POP_ALL", "SOI"),
+      choice(
+        "ANY",
+        "DROP",
+        "EOI",
+        "NEWLINE",
+        "PEEK",
+        "PEEK_ALL",
+        "POP",
+        "POP_ALL",
+        "SOI",
+      ),
 
-    const: ($) => CONST,
+    const: (_) => CONST,
 
-    identifier: ($) => IDENTIFIER,
+    identifier: (_) => IDENTIFIER,
 
     modifier: (_) => choice("_", "@", "$", "!"),
 
@@ -60,13 +71,13 @@ module.exports = grammar({
 
     _terminal: ($) =>
       choice(
-        $._push,
-        $._peek_slice,
+        $.push,
+        $.push_literal,
+        $.peek_slice,
         $.identifier,
         $.string,
-        $._insensitive_string,
+        $.insensitive_string,
         $.range,
-        $._pop,
         $.const,
         $.builtin,
       ),
@@ -84,7 +95,7 @@ module.exports = grammar({
                 choice(
                   /[^xu]/,
                   /u[0-9a-fA-F]{4}/,
-                  /u{[0-9a-fA-F]+}/,
+                  /u\{[0-9a-fA-F]+\}/,
                   /x[0-9a-fA-F]{2}/,
                 ),
               ),
@@ -112,15 +123,17 @@ module.exports = grammar({
           choice(
             /[^xu]/,
             /u[0-9a-fA-F]{4}/,
-            /u{[0-9a-fA-F]+}/,
+            /u\{[0-9a-fA-F]+\}/,
             /x[0-9a-fA-F]{2}/,
           ),
         ),
       ),
 
-    _insensitive_string: ($) => seq("^", $.string),
+    insensitive_string: ($) => seq("^", $.string),
 
-    node_tag: ($) => seq("#", $.identifier),
+    node_tag: ($) => seq("#", $.tag_id, "="),
+
+    tag_id: (_) => IDENTIFIER,
 
     infix_operator: (_) => choice("~", "|"),
 

@@ -60,14 +60,16 @@ inner  = @{ (!(PEEK | "\\") ~ ANY)* ~ (escape ~ inner)? }
         (modifier)
         (expression
           (term
-            (expression
-              (term
-                (string))))
+            (push
+              (expression
+                (term
+                  (string)))))
           (infix_operator)
           (term
             (identifier))
           (infix_operator)
-          (term)))
+          (term
+            (builtin))))
       (grammar_rule
         (identifier)
         (modifier)
@@ -76,8 +78,10 @@ inner  = @{ (!(PEEK | "\\") ~ ANY)* ~ (escape ~ inner)? }
             (expression
               (term
                 (prefix_operator)
-                (ERROR)
                 (expression
+                  (term
+                    (builtin))
+                  (infix_operator)
                   (term
                     (string))))
               (infix_operator)
@@ -278,3 +282,126 @@ camelCaseRule = { "test" }
     (expression
       (term
         (string)))))
+
+================================================================================
+PUSH_LITERAL
+================================================================================
+
+Quote = _{ _QuoteStart ~ QuoteChars ~ _QuoteEnd }
+_QuoteStart = _{ "(" ~ PUSH_LITERAL(")") | "<" ~ PUSH_LITERAL(">") }
+_QuoteEnd = _{ POP }
+QuoteChars = { (!PEEK ~ ANY)* }
+
+--------------------------------------------------------------------------------
+
+(pest
+  (grammar_rule
+    (identifier)
+    (modifier)
+    (expression
+      (term
+        (identifier))
+      (infix_operator)
+      (term
+        (identifier))
+      (infix_operator)
+      (term
+        (identifier))))
+  (grammar_rule
+    (identifier)
+    (modifier)
+    (expression
+      (term
+        (string))
+      (infix_operator)
+      (term
+        (push_literal
+          (string)))
+      (infix_operator)
+      (term
+        (string))
+      (infix_operator)
+      (term
+        (push_literal
+          (string)))))
+  (grammar_rule
+    (identifier)
+    (modifier)
+    (expression
+      (term
+        (builtin))))
+  (grammar_rule
+    (identifier)
+    (expression
+      (term
+        (expression
+          (term
+            (prefix_operator)
+            (builtin))
+          (infix_operator)
+          (term
+            (builtin)))
+        (postfix_operator)))))
+
+================================================================================
+Insensitive string
+================================================================================
+
+keyword = { ^"hello" ~ ^"world" }
+
+--------------------------------------------------------------------------------
+
+(pest
+  (grammar_rule
+    (identifier)
+    (expression
+      (term
+        (insensitive_string
+          (string)))
+      (infix_operator)
+      (term
+        (insensitive_string
+          (string))))))
+
+================================================================================
+PEEK slice with integers
+================================================================================
+
+rule = { PEEK[1..3] ~ PEEK[..2] ~ PEEK[1..] }
+
+--------------------------------------------------------------------------------
+
+(pest
+  (grammar_rule
+    (identifier)
+    (expression
+      (term
+        (peek_slice))
+      (infix_operator)
+      (term
+        (peek_slice))
+      (infix_operator)
+      (term
+        (peek_slice)))))
+
+================================================================================
+Node tags
+================================================================================
+
+rule = { #tag1 = "hello" ~ #tag2 = other }
+
+--------------------------------------------------------------------------------
+
+(pest
+  (grammar_rule
+    (identifier)
+    (expression
+      (term
+        (node_tag
+          (tag_id))
+        (string))
+      (infix_operator)
+      (term
+        (node_tag
+          (tag_id))
+        (identifier)))))

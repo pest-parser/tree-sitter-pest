@@ -5,3 +5,8 @@ build
 /target/
 *.wasm
 .DS_Store
+*.exp
+*.lib
+*.dll
+*.so
+*.obj

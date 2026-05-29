@@ -2,6 +2,7 @@
   {
     "type": "block_comment",
     "named": true,
+    "extra": true,
     "fields": {}
   },
   {
@@ -63,9 +64,29 @@
     }
   },
   {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "infix_operator",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "insensitive_string",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "modifier",
@@ -81,15 +102,21 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "tag_id",
           "named": true
         }
       ]
     }
   },
   {
+    "type": "peek_slice",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "pest",
     "named": true,
+    "root": true,
     "fields": {},
     "children": {
       "multiple": true,
@@ -113,6 +140,36 @@
     "fields": {}
   },
   {
+    "type": "push",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "push_literal",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "range",
     "named": true,
     "fields": {},
@@ -133,12 +190,17 @@
     "fields": {}
   },
   {
+    "type": "tag_id",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "term",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "builtin",
@@ -157,7 +219,15 @@
           "named": true
         },
         {
+          "type": "insensitive_string",
+          "named": true
+        },
+        {
           "type": "node_tag",
+          "named": true
+        },
+        {
+          "type": "peek_slice",
           "named": true
         },
         {
@@ -166,6 +236,14 @@
         },
         {
           "type": "prefix_operator",
+          "named": true
+        },
+        {
+          "type": "push",
+          "named": true
+        },
+        {
+          "type": "push_literal",
           "named": true
         },
         {
@@ -280,6 +358,10 @@
     "named": false
   },
   {
+    "type": "PUSH_LITERAL",
+    "named": false
+  },
+  {
     "type": "SOI",
     "named": false
   },
@@ -308,12 +390,9 @@
     "named": true
   },
   {
-    "type": "identifier",
-    "named": true
-  },
-  {
     "type": "line_comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "{",
